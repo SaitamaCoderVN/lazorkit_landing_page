@@ -1,0 +1,464 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LazorKit // Kinetic Control Surface</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#5c0034",
+                        "on-secondary-fixed-variant": "#613aa1",
+                        "surface-tint": "#b1a1ff",
+                        "primary-fixed": "#a491ff",
+                        "surface-container-lowest": "#000000",
+                        "secondary-container": "#572e96",
+                        "error-dim": "#d73357",
+                        "secondary": "#b58cf9",
+                        "secondary-dim": "#b289f6",
+                        "error": "#ff6e84",
+                        "secondary-fixed": "#dec8ff",
+                        "on-secondary-container": "#ddc6ff",
+                        "on-surface": "#eee0ff",
+                        "tertiary-fixed-dim": "#f37cae",
+                        "surface-container-highest": "#2f1a50",
+                        "tertiary": "#ff9ac2",
+                        "tertiary-dim": "#ec77a9",
+                        "on-secondary-fixed": "#441783",
+                        "secondary-fixed-dim": "#d3b7ff",
+                        "on-primary-container": "#230075",
+                        "on-tertiary": "#6b0c3f",
+                        "outline": "#7f6e99",
+                        "outline-variant": "#504169",
+                        "surface-container-low": "#1a0934",
+                        "primary-fixed-dim": "#9780ff",
+                        "on-secondary": "#300069",
+                        "on-error": "#490013",
+                        "on-background": "#eee0ff",
+                        "error-container": "#a70138",
+                        "on-tertiary-fixed": "#37001d",
+                        "on-primary-fixed-variant": "#2d008e",
+                        "on-surface-variant": "#b6a3d1",
+                        "on-primary-fixed": "#000000",
+                        "surface-variant": "#2f1a50",
+                        "tertiary-container": "#fc84b7",
+                        "background": "#14052b",
+                        "primary-container": "#a491ff",
+                        "on-primary": "#2f0095",
+                        "primary-dim": "#7757fa",
+                        "primary": "#b1a1ff",
+                        "on-tertiary-fixed-variant": "#6f1042",
+                        "inverse-on-surface": "#5d4e77",
+                        "on-error-container": "#ffb2b9",
+                        "tertiary-fixed": "#ff8cbb",
+                        "surface": "#14052b",
+                        "inverse-primary": "#613de3",
+                        "surface-bright": "#361f5a",
+                        "surface-container": "#210f3d",
+                        "surface-container-high": "#281446",
+                        "surface-dim": "#14052b",
+                        "inverse-surface": "#fef7ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Space Grotesk"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0B0F14;
+            color: #eee0ff;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(47, 26, 80, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(80, 65, 105, 0.2);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .glass-panel:hover {
+            transform: translateY(-4px);
+            background: rgba(60, 35, 100, 0.5);
+            box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.5), 0 0 15px rgba(124, 92, 255, 0.15);
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Kinetic Flow Animations */
+        @keyframes data-pulse {
+            0% { left: 0%; opacity: 0; }
+            5% { opacity: 1; }
+            45% { opacity: 1; }
+            55% { opacity: 1; filter: drop-shadow(0 0 8px rgba(177, 161, 255, 0.8)); }
+            95% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+        .flow-pulse {
+            position: absolute;
+            top: 50%;
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #b1a1ff, transparent);
+            animation: data-pulse 4s infinite linear;
+            z-index: 5;
+        }
+
+        @keyframes node-validation {
+            0%, 45%, 65%, 100% { box-shadow: 0 0 0px transparent; border-color: rgba(80, 65, 105, 0.2); }
+            50%, 60% { box-shadow: 0 0 20px rgba(177, 161, 255, 0.4); border-color: #b1a1ff; }
+        }
+        .node-rules.active-pulse { animation: node-validation 4s infinite linear; }
+
+        @keyframes node-execution-allowed {
+            0%, 75% { border-color: rgba(80, 65, 105, 0.2); background: rgba(47, 26, 80, 0.4); }
+            80%, 95% { border-color: #4ade80; background: rgba(74, 222, 128, 0.1); }
+        }
+        @keyframes node-execution-blocked {
+            0%, 75% { border-color: rgba(80, 65, 105, 0.2); background: rgba(47, 26, 80, 0.4); }
+            80%, 95% { border-color: #ff6e84; background: rgba(255, 110, 132, 0.1); }
+        }
+        .node-execution.allowed { animation: node-execution-allowed 8s infinite linear; }
+        .node-execution.blocked { animation: node-execution-blocked 8s infinite linear 4s; }
+
+        /* General Status Pulse */
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.9); }
+        }
+        .status-pulse { animation: pulse-soft 2s infinite ease-in-out; }
+
+        /* Terminal Line Animation */
+        .terminal-entry { opacity: 0; transform: translateY(5px); }
+        .terminal-entry.visible { opacity: 1; transform: translateY(0); transition: all 0.4s ease-out; }
+
+        /* Custom Scrollbar for Terminal */
+        .terminal-scroll::-webkit-scrollbar { width: 4px; }
+        .terminal-scroll::-webkit-scrollbar-thumb { background: #504169; border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-[#0B0F14] text-on-surface selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 bg-[#0B0F14]/80 backdrop-blur-xl shadow-[0_0_40px_rgba(124,92,255,0.06)]">
+<div class="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto font-['Space_Grotesk'] tracking-tight">
+<div class="flex items-center gap-3">
+<img alt="LazorKit Logo" class="h-8 w-auto rounded-full" src="https://pbs.twimg.com/profile_images/1915714297780723714/6bsBMrxd_400x400.jpg" style="">
+<span class="text-2xl font-bold tracking-tighter text-white uppercase" style="">LazorKit</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#7C5CFF] font-bold border-b-2 border-[#7C5CFF] pb-1" href="#" style="">Home</a>
+<a class="text-slate-400 hover:text-white transition-colors" href="#" style="">Usecases</a>
+<a class="text-slate-400 hover:text-white transition-colors" href="#" style="">Docs</a>
+<a class="text-slate-400 hover:text-white transition-colors" href="#" style="">About</a>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed font-bold px-6 py-2 rounded-md hover:shadow-[0_0_15px_rgba(177,161,255,0.5)] transition-all scale-95 active:scale-100" style="">
+            Connect Wallet
+        </button>
+</div>
+</nav>
+<main class="pt-32">
+<!-- Hero Section -->
+<section class="reveal max-w-screen-2xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-40 active">
+<div class="space-y-8">
+<div class="inline-flex items-center gap-2 bg-surface-container-highest/30 px-3 py-1 rounded-sm border-l-2 border-primary">
+<div class="w-1.5 h-1.5 rounded-full bg-primary status-pulse"></div>
+<span class="font-['JetBrains_Mono'] text-[0.7rem] uppercase tracking-widest text-primary" style="">System Status: Operational</span>
+</div>
+<h1 class="text-[4rem] leading-[1.1] font-bold tracking-tight text-white" style="">
+                Bots can act — <br>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary" style="">but only within rules.</span>
+</h1>
+<p class="text-xl text-on-surface-variant max-w-lg leading-relaxed font-light" style="">
+                Give bots the power to execute — without ever risking your funds. LazorKit enforces intent-based constraints directly on the control surface.
+            </p>
+<div class="flex items-center gap-6 pt-4">
+<button class="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed px-8 py-4 rounded-md font-bold tracking-tight hover:shadow-[0_0_25px_rgba(124,92,255,0.3)] transition-all" style="">
+                    See it in action
+                </button>
+<button class="text-on-surface border-b-2 border-transparent hover:border-primary transition-all py-2 font-medium" style="">
+                    Try the demo
+                </button>
+</div>
+</div>
+<!-- Kinetic Control Panel Visual -->
+<div class="relative group reveal active">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 blur-3xl opacity-30"></div>
+<div class="relative glass-panel rounded-xl p-6 shadow-2xl">
+<div class="flex items-center justify-between mb-6 pb-4 border-b border-outline-variant/15">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-error status-pulse"></div>
+<span class="font-['JetBrains_Mono'] text-xs text-on-surface-variant" style="">REAL-TIME MONITOR</span>
+</div>
+<span class="font-['JetBrains_Mono'] text-[0.65rem] text-slate-500 uppercase tracking-widest" style="">v2.04.88_KINETIC</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-container-low p-4 rounded-lg flex items-center justify-between border-l-2 border-primary/20">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" style="">swap_horiz</span>
+<div class="font-['JetBrains_Mono'] text-sm" style="">
+<span class="text-slate-400" style="">EXEC:</span> Swap 20 USDC
+                            </div>
+</div>
+<div class="px-3 py-1 bg-green-500/10 text-green-400 text-[0.65rem] font-bold rounded uppercase tracking-tighter border border-green-500/20" style="">
+                            ALLOWED
+                        </div>
+</div>
+<div class="bg-surface-container-highest p-4 rounded-lg flex items-center justify-between border-l-2 border-error">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-error" style="">security</span>
+<div class="font-['JetBrains_Mono'] text-sm" style="">
+<span class="text-slate-400" style="">EXEC:</span> Swap 100 USDC
+                            </div>
+</div>
+<div class="px-3 py-1 bg-error/10 text-error-dim text-[0.65rem] font-bold rounded uppercase tracking-tighter border border-error/20" style="">
+                            BLOCKED
+                        </div>
+</div>
+</div>
+<div class="mt-8 p-4 bg-surface-container-lowest rounded border border-outline-variant/10">
+<div class="font-['JetBrains_Mono'] text-[0.7rem] text-primary/70 mb-2 flex items-center gap-2" style="">
+<div class="w-1.5 h-1.5 rounded-full bg-primary status-pulse"></div>
+                        POLICY_ENGINE_REPORT:
+                    </div>
+<div class="font-['JetBrains_Mono'] text-[0.75rem] text-slate-300 leading-relaxed" style="">
+                        &gt; Violation detected: Threshold limit exceeded<br>
+                        &gt; Action: Transaction dropped locally.<br>
+                        &gt; Status: <span class="text-primary" style="">Wallet Secure.</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Trust Statement -->
+<section class="reveal w-full bg-surface-container-low/30 py-12 border-y border-outline-variant/5 active">
+<div class="max-w-screen-2xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex items-center gap-4 group cursor-default">
+<span class="material-symbols-outlined text-primary scale-125 transition-transform group-hover:scale-150" style="">shield_with_heart</span>
+<span class="text-2xl font-bold tracking-tight text-white uppercase" style="">No private keys.</span>
+</div>
+<div class="h-px md:h-12 w-24 md:w-px bg-outline-variant/20"></div>
+<div class="flex items-center gap-4 group cursor-default">
+<span class="material-symbols-outlined text-primary scale-125 transition-transform group-hover:scale-150" style="">verified_user</span>
+<span class="text-2xl font-bold tracking-tight text-white uppercase" style="">No blind trust.</span>
+</div>
+<div class="h-px md:h-12 w-24 md:w-px bg-outline-variant/20"></div>
+<div class="flex items-center gap-4 group cursor-default">
+<span class="material-symbols-outlined text-primary scale-125 transition-transform group-hover:scale-150" style="">gavel</span>
+<span class="text-2xl font-bold tracking-tight text-white uppercase" style="">Fully enforced on-chain.</span>
+</div>
+</div>
+</section>
+<!-- Problem Section -->
+<section class="reveal max-w-screen-2xl mx-auto px-8 py-32 grid grid-cols-1 md:grid-cols-2 gap-24 active">
+<div class="flex flex-col justify-center">
+<label class="font-['JetBrains_Mono'] text-[0.75rem] text-error font-bold uppercase tracking-[0.2em] mb-4" style="">The Critical Risk</label>
+<h2 class="text-5xl font-bold tracking-tight text-white mb-6" style="">One bug in your bot = full wallet drained.</h2>
+<p class="text-on-surface-variant text-lg leading-relaxed mb-8" style="">
+                Automation is powerful, but dangerous. Traditional setups give bots full control over your private keys. If the bot gets hacked, or its logic fails, your entire balance is gone in seconds.
+            </p>
+<div class="bg-error/5 p-6 rounded-xl border-l-4 border-error hover:bg-error/10 transition-colors">
+<p class="font-['JetBrains_Mono'] text-sm text-error-dim italic" style="">"The average DeFi bot exploit costs users $240k per incident. Don't be a statistic."</p>
+</div>
+</div>
+<div class="relative flex items-center justify-center">
+<div class="absolute w-full h-full bg-primary/5 rounded-full blur-3xl status-pulse"></div>
+<img alt="System failure abstract" class="w-full max-w-md rounded-2xl grayscale contrast-125 opacity-40 mix-blend-lighten" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJwUebpPp431XBTuXhvaRS4TUB6D53gCCPedFFFHUMElcwDa40MKSQ9RniWWUj9y31rWjInToP4QsIjRc2nEZyRXkQkJB9u2gVTCGH4VfMSqVQg-pskgRb27Sd82GY50L9_hbYDtEejEdBz-TfLDelSGXuhKHTSzlR2S6WghKuAOqDtNEYb36Nd-kHF_9hqOhEYs8Uj1V-rI0EfV3qscBxZE4_y44TTbgg54en0WWH_tBFafQCAlrvDbMaqJgtLmtmGOXCytEHPCU" style="">
+</div>
+</section>
+<!-- Refined Kinetic Flow Section -->
+<section class="reveal max-w-screen-2xl mx-auto px-8 py-32 text-center active">
+<div class="mb-20">
+<label class="font-['JetBrains_Mono'] text-[0.75rem] text-primary font-bold uppercase tracking-[0.2em] mb-4" style="">Architecture</label>
+<h2 class="text-4xl font-bold tracking-tight text-white uppercase" style="">The Kinetic Flow</h2>
+</div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-8 relative py-12">
+<!-- Animated Background Data Line -->
+<div class="hidden md:block absolute top-1/2 left-0 right-0 h-px bg-outline-variant/20 -translate-y-1/2 overflow-hidden">
+<div class="flow-pulse"></div>
+<div class="flow-pulse" style="animation-delay: 2s;"></div>
+</div>
+<!-- Node 1: Agent -->
+<div class="w-full md:w-1/4 p-6 glass-panel rounded-xl flex flex-col items-center gap-4 group z-10 border border-outline-variant/20">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center border border-outline-variant/30 group-hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-3xl text-slate-400 group-hover:text-primary transition-colors" style="">smart_toy</span>
+</div>
+<div>
+<h3 class="font-bold text-white uppercase tracking-widest text-sm mb-1" style="">Agent</h3>
+<p class="text-[0.7rem] text-on-surface-variant uppercase font-medium" style="">Request Initiation</p>
+</div>
+</div>
+<!-- Node 2: LazorKit -->
+<div class="w-full md:w-1/4 p-6 glass-panel rounded-xl flex flex-col items-center gap-4 group z-10 border border-primary/20">
+<div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30 group-hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined text-3xl text-primary status-pulse" style="">layers</span>
+</div>
+<div>
+<h3 class="font-bold text-primary uppercase tracking-widest text-sm mb-1" style="">LazorKit</h3>
+<p class="text-[0.7rem] text-on-surface-variant uppercase font-medium" style="">Control Intercept</p>
+</div>
+</div>
+<!-- Node 3: Rules (Validation Glow) -->
+<div class="node-rules active-pulse w-full md:w-1/4 p-6 glass-panel rounded-xl flex flex-col items-center gap-4 group z-10 border border-outline-variant/20">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center border border-outline-variant/30 group-hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-3xl text-slate-400 group-hover:text-primary transition-colors" style="">rule</span>
+</div>
+<div>
+<h3 class="font-bold text-white uppercase tracking-widest text-sm mb-1" style="">Rules</h3>
+<p class="text-[0.7rem] text-on-surface-variant uppercase font-medium" style="">Constraint Check</p>
+</div>
+</div>
+<!-- Node 4: Execution (Green/Red Toggle) -->
+<div class="node-execution allowed blocked w-full md:w-1/4 p-6 glass-panel rounded-xl flex flex-col items-center gap-4 group z-10 border border-outline-variant/20">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center border border-outline-variant/30 transition-all">
+<span class="material-symbols-outlined text-3xl text-slate-400 group-hover:text-primary transition-colors" style="">terminal</span>
+</div>
+<div>
+<h3 class="font-bold text-white uppercase tracking-widest text-sm mb-1" style="">Execution</h3>
+<p class="text-[0.7rem] text-on-surface-variant uppercase font-medium" style="">On-Chain Action</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Demo Terminal Section -->
+<section class="reveal max-w-4xl mx-auto px-8 py-32 active">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-bold tracking-tight text-white mb-4" style="">What happens when a bot misbehaves?</h2>
+<p class="text-on-surface-variant" style="">Watch how LazorKit sanitizes bot commands in real-time.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-2xl overflow-hidden group">
+<div class="bg-surface-container-low px-4 py-2 flex items-center justify-between border-b border-outline-variant/15">
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-green-500 status-pulse"></div>
+<span class="font-['JetBrains_Mono'] text-[0.65rem] text-slate-500" style="">lazorkit_cli --listening</span>
+</div>
+</div>
+<div class="p-8 font-['JetBrains_Mono'] text-sm leading-relaxed terminal-scroll max-h-[400px] overflow-y-auto" id="terminal-content">
+<div class="terminal-entry mb-4 visible" style="">
+<span class="text-slate-500" style="">[14:02:01]</span> <span class="text-primary" style="">INFO:</span> Initializing control surface layer...<br>
+<span class="text-slate-500" style="">[14:02:02]</span> <span class="text-primary" style="">INFO:</span> Listening for agent signals on Port 8080...
+                </div>
+<div class="terminal-entry mb-4 visible" style="">
+<span class="text-slate-500" style="">[14:05:12]</span> <span class="text-secondary" style="">AGENT:</span> <span class="text-white" style="">REQUEST swap(0xUSDC, 50.00, 0xWALLET_B)</span><br>
+<span class="text-slate-500" style="">[14:05:12]</span> <span class="text-primary" style="">LAZOR:</span> Validating ruleset "Standard_Limits"...<br>
+<span class="text-slate-500" style="">[14:05:13]</span> <span class="text-green-400" style="">PASSED:</span> 50 USDC &lt;= Max Daily Limit (100 USDC)<br>
+<span class="text-slate-500" style="">[14:05:13]</span> <span class="text-green-400" style="">STATUS:</span> <span class="bg-green-400/10 text-green-400 px-1" style="">TRANSACTION_BROADCASTED</span>
+</div>
+<div class="terminal-entry mb-2 visible" style="">
+<span class="text-slate-500" style="">[14:08:44]</span> <span class="text-secondary" style="">AGENT:</span> <span class="text-white" style="">REQUEST transfer(0xALL, 0xUNKNOWN_ADDR)</span><br>
+<span class="text-slate-500" style="">[14:08:44]</span> <span class="text-primary" style="">LAZOR:</span> Validating ruleset "Standard_Limits"...<br>
+<span class="text-slate-500" style="">[14:08:44]</span> <span class="text-error-dim" style="">FAILED:</span> Action 'Transfer' not on Allowlist for this session.<br>
+<span class="text-slate-500" style="">[14:08:45]</span> <span class="text-error-dim" style="">FAILED:</span> '0xUNKNOWN_ADDR' is not a registered counterparty.<br>
+<span class="text-slate-500" style="">[14:08:45]</span> <span class="text-error-dim" style="">STATUS:</span> <span class="bg-error/10 text-error-dim px-1 font-bold" style="">INTERCEPTED_AND_DROPPED</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Insight Section -->
+<section class="reveal max-w-screen-2xl mx-auto px-8 py-32 border-t border-outline-variant/10 active">
+<div class="max-w-2xl">
+<h2 class="text-5xl font-bold tracking-tight text-white mb-8" style="">The problem isn’t execution — <span class="text-primary italic" style="">it’s permission.</span></h2>
+<p class="text-xl text-on-surface-variant leading-relaxed" style="">
+                Most infrastructure treats bots as owners. LazorKit treats bots as operators. By decoupling the ability to command from the right to authorize, we create a fail-safe environment for the next generation of autonomous agents.
+            </p>
+</div>
+</section>
+<!-- Final CTA Section -->
+<section class="reveal max-w-screen-2xl mx-auto px-8 pb-32 active">
+<div class="relative bg-gradient-to-br from-surface-container-low to-surface-container-highest rounded-[2rem] p-16 overflow-hidden border border-primary/10 group">
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none transition-transform duration-1000 group-hover:scale-110">
+<img alt="Digital flow background" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5iJiLyzCeutjjr7uTCFje3-5h2GnFJ36kuUj-bkDvE-UliiJJkbkcgDECl_MXfwCWIAP4NMdchONbtmk9Fkd2M0yyQU9rFk_RwL3eIKnj2yfHj4Dtwn4eFbYckJ3lhKsf07bFQewtKhj3wPcvOiKf_XFwuRdTBnuGESKVq-wyK_0QYxii-hGdJ2YQnmrtHT3fPUlLWaRujmbzlvnrFuYtOZ4d6miEht53C2CIOkIFoa9CUVCmIqgM7PSdxIxIu9StXdHywoI3pU0" style="">
+</div>
+<div class="relative z-10 max-w-xl">
+<h2 class="text-5xl font-bold tracking-tight text-white mb-6" style="">Ready for kinetic control?</h2>
+<p class="text-lg text-on-surface-variant mb-10" style="">Join the developers and funds building secure automation on LazorKit.</p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary text-on-primary font-bold px-10 py-5 rounded-md hover:scale-105 transition-transform shadow-lg shadow-primary/20" style="">
+                        Get Early Access
+                    </button>
+<button class="glass-panel text-white font-bold px-10 py-5 rounded-md border border-white/10" style="">
+                        Read the Whitepaper
+                    </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="w-full border-t border-[#504169]/15 bg-[#000000]">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-12 py-16 w-full font-['JetBrains_Mono'] text-[0.75rem] uppercase tracking-[0.05em]">
+<div class="space-y-6">
+<div class="text-[#7C5CFF] font-black text-xl" style="">LAZORKIT</div>
+<p class="text-slate-500 max-w-xs leading-relaxed" style="">
+                © 2024 LAZORKIT // KINETIC CONTROL SURFACE<br>
+                BUILT FOR THE AGENTIC ERA.
+            </p>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col gap-4">
+<a class="text-slate-500 hover:text-[#7C5CFF] underline underline-offset-4 transition-all" href="#" style="">Network Status</a>
+<a class="text-slate-500 hover:text-[#7C5CFF] underline underline-offset-4 transition-all" href="#" style="">Security Audit</a>
+</div>
+<div class="flex flex-col gap-4">
+<a class="text-slate-500 hover:text-[#7C5CFF] underline underline-offset-4 transition-all" href="#" style="">Github</a>
+<a class="text-slate-500 hover:text-[#7C5CFF] underline underline-offset-4 transition-all" href="#" style="">Twitter</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+    // Scroll Reveal Observer
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Terminal Entry Sequence
+    const terminalObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            const entries = document.querySelectorAll('.terminal-entry');
+            entries.forEach((entry, i) => {
+                setTimeout(() => {
+                    entry.classList.add('visible');
+                    const container = document.getElementById('terminal-content');
+                    if (container) container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+                }, i * 1000);
+            });
+            terminalObserver.unobserve(entries[0].target);
+        }
+    }, { threshold: 0.5 });
+
+    const terminalSection = document.getElementById('terminal-content');
+    if (terminalSection) terminalObserver.observe(terminalSection);
+</script>
+</body></html>
