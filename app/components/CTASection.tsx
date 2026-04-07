@@ -1,63 +1,108 @@
+"use client";
+
+import { useState } from "react";
+
+function NpmSnippet() {
+  const [copied, setCopied] = useState(false);
+  const cmd = "npm install @lazorkit/sdk";
+
+  const copy = () => {
+    navigator.clipboard.writeText(cmd).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div className="flex items-center gap-3 bg-[#0a0a0a] rounded-lg px-4 py-3 w-fit">
+      <span className="text-[#444444] select-none" style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "0.75rem" }}>$</span>
+      <span className="text-[#666666]" style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "0.8rem" }}>{cmd}</span>
+      <button
+        onClick={copy}
+        aria-label="Copy install command"
+        className="ml-2 text-[#444444] hover:text-[#737373] transition-colors"
+      >
+        {copied ? (
+          <span className="material-symbols-outlined text-emerald-400 text-base">check</span>
+        ) : (
+          <span className="material-symbols-outlined text-base">content_copy</span>
+        )}
+      </button>
+    </div>
+  );
+}
+
+function NewsletterForm() {
+  const [email, setEmail] = useState("");
+
+  return (
+    <div className="flex gap-2 max-w-sm">
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="your@email.com"
+        className="flex-1 bg-[#0a0a0a] border border-[#222222] focus:border-[#333333] rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#444444] outline-none transition-colors"
+        style={{ fontFamily: "var(--font-jetbrains-mono)" }}
+      />
+      <button
+        type="submit"
+        className="bg-[#8b5cf6] text-white rounded-lg px-5 py-3 font-medium hover:bg-[#7c3aed] transition-colors text-sm"
+        style={{ fontFamily: "var(--font-space-grotesk)" }}
+      >
+        Subscribe
+      </button>
+    </div>
+  );
+}
+
 export default function CTASection() {
   return (
-    <section className="reveal max-w-screen-2xl mx-auto px-8 pb-32">
-      <div className="relative bg-gradient-to-br from-surface-container-low to-surface-container-highest rounded-[2rem] p-16 overflow-hidden border border-primary/10 group">
-        {/* Background diagonal texture */}
-        <div
-          className="absolute inset-0 opacity-5 pointer-events-none"
-          style={{
-            background:
-              "repeating-linear-gradient(15deg, transparent, transparent 40px, rgba(177,161,255,0.4) 40px, rgba(177,161,255,0.4) 41px)",
-          }}
-        />
-        {/* Ambient glow top-right */}
-        <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none transition-transform duration-1000 group-hover:scale-110 overflow-hidden">
-          <div
-            className="w-full h-full float-slow"
-            style={{
-              background:
-                "radial-gradient(ellipse at 80% 20%, rgba(177,161,255,0.4) 0%, transparent 70%)",
-            }}
-          />
-        </div>
-
-        {/* Content */}
+    <section id="cta" className="reveal max-w-screen-2xl mx-auto px-8 pb-40">
+      <div className="relative bg-[#1a1a1a] rounded-2xl p-16 shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
         <div className="relative z-10 max-w-xl">
           <h2
-            className="text-5xl font-bold tracking-tight text-white mb-6"
+            className="text-4xl lg:text-5xl font-bold tracking-tight text-white mb-6"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
             Ready for kinetic control?
           </h2>
           <p
-            className="text-lg text-on-surface-variant mb-10"
+            className="text-lg text-[#737373] mb-8"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            Join the developers and funds building secure automation on
+            Join the developers and teams building secure automation on
             LazorKit.
           </p>
-          <div className="flex flex-wrap gap-4">
-            <button
-              className="gradient-animate bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed font-bold px-10 py-5 rounded-md hover:scale-105 transition-transform shadow-[0_0_20px_rgba(177,161,255,0.2)]"
+          <div className="mb-8">
+            <NpmSnippet />
+          </div>
+          <div className="flex flex-wrap gap-4 mb-12">
+            <a
+              href="#"
+              className="bg-[#8b5cf6] text-white font-medium px-8 py-3.5 rounded-lg hover:bg-[#7c3aed] transition-colors"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
               Get Early Access
-            </button>
-            <button
-              className="glass-panel text-white font-bold px-10 py-5 rounded-md border border-white/10"
+            </a>
+            <a
+              href="#"
+              className="text-[#737373] font-medium px-8 py-3.5 rounded-lg border border-[#222222] hover:border-[#333333] hover:text-white transition-colors"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
               Read the Whitepaper
-            </button>
+            </a>
           </div>
-          <div className="mt-8 flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-primary status-pulse" />
-            <span
-              className="text-[0.65rem] text-on-surface-variant uppercase tracking-widest"
-              style={{ fontFamily: "var(--font-jetbrains-mono)" }}
+
+          {/* Newsletter — moved here from footer */}
+          <div className="pt-8 border-t border-[#1a1a1a]">
+            <p
+              className="text-sm text-[#666666] mb-4"
+              style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
-              Currently in private beta // Applications open
-            </span>
+              Or subscribe for early access updates.
+            </p>
+            <NewsletterForm />
           </div>
         </div>
       </div>

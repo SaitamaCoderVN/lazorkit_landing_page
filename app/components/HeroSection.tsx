@@ -37,34 +37,34 @@ export default function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="reveal max-w-screen-2xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-40"
+      className="reveal max-w-screen-2xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-40"
     >
       {/* Left: copy */}
-      <div className="space-y-8">
+      <div className="space-y-10">
         {/* Status badge */}
         <div
           data-hero-item
           style={fadeStyle}
-          className="inline-flex items-center gap-2 bg-surface-container-highest/30 px-3 py-1 rounded-sm border-l-2 border-primary"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#222222]"
         >
-          <div className="w-1.5 h-1.5 rounded-full bg-primary status-pulse" />
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 status-pulse" />
           <span
-            className="text-[0.7rem] uppercase tracking-widest text-primary"
+            className="text-[0.7rem] text-[#737373]"
             style={{ fontFamily: "var(--font-jetbrains-mono)" }}
           >
-            System Status: Operational
+            System Operational
           </span>
         </div>
 
-        {/* Headline */}
+        {/* Headline — larger, tighter */}
         <h1
           data-hero-item
           style={{ fontFamily: "var(--font-space-grotesk)", ...fadeStyle }}
-          className="text-[3.5rem] leading-[1.1] font-bold tracking-[-0.04em] text-white"
+          className="text-6xl lg:text-7xl leading-[1.05] font-bold tracking-[-0.04em] text-white"
         >
           Bots can act —{" "}
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+          <span className="text-primary">
             but only within rules.
           </span>
         </h1>
@@ -73,7 +73,7 @@ export default function HeroSection() {
         <p
           data-hero-item
           style={{ fontFamily: "var(--font-space-grotesk)", ...fadeStyle }}
-          className="text-xl text-on-surface-variant max-w-lg leading-relaxed font-light"
+          className="text-lg text-[#999999] max-w-lg leading-relaxed"
         >
           Give bots the power to execute — without ever risking your funds.
           LazorKit enforces intent-based constraints directly on the control
@@ -84,20 +84,22 @@ export default function HeroSection() {
         <div
           data-hero-item
           style={fadeStyle}
-          className="flex items-center gap-6 pt-4"
+          className="flex items-center gap-6 pt-2"
         >
-          <button
-            className="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed px-8 py-4 rounded-md font-bold tracking-tight hover:shadow-[0_0_25px_rgba(124,92,255,0.3)] transition-all"
+          <a
+            href="#terminal"
+            className="bg-[#8b5cf6] text-white px-8 py-3.5 rounded-lg font-medium hover:bg-[#7c3aed] transition-colors"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
             See it in action
-          </button>
-          <button
-            className="text-on-surface border-b-2 border-transparent hover:border-primary transition-all py-2 font-medium"
+          </a>
+          <a
+            href="#cta"
+            className="text-[#999999] hover:text-white transition-colors py-2 font-medium"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            Try the demo
-          </button>
+            Try the demo &rarr;
+          </a>
         </div>
       </div>
 

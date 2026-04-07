@@ -4,8 +4,6 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 
 const navLinks = [
-  { label: "Home", href: "#", active: true },
-  { label: "Usecases", href: "#" },
   { label: "Docs", href: "#" },
   { label: "About", href: "#" },
 ];
@@ -23,13 +21,15 @@ export default function Navbar() {
   return (
     <nav
       className={[
-        "fixed top-0 w-full z-50 backdrop-blur-xl shadow-[0_0_40px_rgba(124,92,255,0.06)] transition-colors duration-300",
-        scrolled ? "bg-[#14052b]/95" : "bg-[#14052b]/80",
+        "fixed top-0 w-full z-50 backdrop-blur-xl transition-all duration-300",
+        scrolled
+          ? "bg-[#0a0a0a]/90 border-b border-white/8 shadow-[0_1px_12px_rgba(255,255,255,0.02)]"
+          : "bg-[#0a0a0a]/60 border-b border-transparent",
       ].join(" ")}
     >
       <div className="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
         {/* Logo */}
-        <div className="flex items-center gap-3">
+        <a href="#" className="flex items-center gap-3">
           <Image
             src="https://pbs.twimg.com/profile_images/1915714297780723714/6bsBMrxd_400x400.jpg"
             alt="LazorKit Logo"
@@ -44,7 +44,7 @@ export default function Navbar() {
           >
             LazorKit
           </span>
-        </div>
+        </a>
 
         {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-8">
@@ -52,11 +52,7 @@ export default function Navbar() {
             <a
               key={link.label}
               href={link.href}
-              className={
-                link.active
-                  ? "text-primary font-bold border-b-2 border-primary pb-1"
-                  : "text-on-surface-variant hover:text-on-surface transition-colors"
-              }
+              className="text-[#737373] hover:text-white transition-colors"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
               {link.label}
@@ -66,12 +62,13 @@ export default function Navbar() {
 
         {/* Right side */}
         <div className="flex items-center gap-4">
-          <button
-            className="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed font-bold px-6 py-2 rounded-md hover:shadow-[0_0_15px_rgba(177,161,255,0.5)] transition-all scale-95 hover:scale-100"
+          <a
+            href="#cta"
+            className="bg-[#8b5cf6] text-white font-medium px-5 py-2 rounded-md hover:bg-[#7c3aed] transition-colors"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            Connect Wallet
-          </button>
+            More details
+          </a>
           {/* Hamburger — mobile only */}
           <button
             className="md:hidden flex flex-col justify-center gap-1.5 w-8 h-8"
@@ -80,19 +77,19 @@ export default function Navbar() {
           >
             <span
               className={[
-                "block h-0.5 bg-on-surface transition-all duration-300 origin-center",
+                "block h-0.5 bg-white transition-all duration-300 origin-center",
                 isMenuOpen ? "rotate-45 translate-y-2" : "",
               ].join(" ")}
             />
             <span
               className={[
-                "block h-0.5 bg-on-surface transition-all duration-300",
+                "block h-0.5 bg-white transition-all duration-300",
                 isMenuOpen ? "opacity-0" : "",
               ].join(" ")}
             />
             <span
               className={[
-                "block h-0.5 bg-on-surface transition-all duration-300 origin-center",
+                "block h-0.5 bg-white transition-all duration-300 origin-center",
                 isMenuOpen ? "-rotate-45 -translate-y-2" : "",
               ].join(" ")}
             />
@@ -102,16 +99,12 @@ export default function Navbar() {
 
       {/* Mobile dropdown */}
       {isMenuOpen && (
-        <div className="md:hidden glass-panel border-t border-outline-variant/15 px-8 py-6 space-y-4">
+        <div className="md:hidden bg-[#111111] border-t border-white/5 px-8 py-6 space-y-4">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className={
-                link.active
-                  ? "block text-primary font-bold"
-                  : "block text-on-surface-variant hover:text-on-surface transition-colors"
-              }
+              className="block text-[#737373] hover:text-white transition-colors"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
               onClick={() => setIsMenuOpen(false)}
             >

@@ -5,11 +5,14 @@ import { useEffect } from "react";
 export default function MouseGlowProvider() {
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
-      const panels = document.querySelectorAll<HTMLElement>(".glass-panel");
-      panels.forEach((panel) => {
-        const rect = panel.getBoundingClientRect();
-        panel.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-        panel.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+      document.documentElement.style.setProperty("--cursor-x", `${e.clientX}px`);
+      document.documentElement.style.setProperty("--cursor-y", `${e.clientY}px`);
+
+      const cards = document.querySelectorAll<HTMLElement>("[data-glow]");
+      cards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--glow-x", `${e.clientX - rect.left}px`);
+        card.style.setProperty("--glow-y", `${e.clientY - rect.top}px`);
       });
     };
     window.addEventListener("mousemove", onMouseMove, { passive: true });

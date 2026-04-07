@@ -3,12 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function ControlPanel() {
-  const panelRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [count, setCount] = useState(0);
   const [rowsVisible, setRowsVisible] = useState([false, false, false]);
 
-  // Counter animation
   useEffect(() => {
     const target = 1284;
     const duration = 2000;
@@ -22,7 +20,6 @@ export default function ControlPanel() {
     requestAnimationFrame(frame);
   }, []);
 
-  // Staggered row entrance
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -47,38 +44,23 @@ export default function ControlPanel() {
     return () => observer.disconnect();
   }, []);
 
-  // Magnetic spotlight
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const panel = panelRef.current;
-    if (!panel) return;
-    const rect = panel.getBoundingClientRect();
-    panel.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-    panel.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-  };
-
   return (
-    <div ref={containerRef} className="relative group">
-      {/* Ambient glow behind panel */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 blur-3xl opacity-30 pointer-events-none" />
-
-      <div
-        ref={panelRef}
-        onMouseMove={handleMouseMove}
-        className="relative glass-panel rounded-xl p-6 shadow-[0_0_40px_rgba(124,92,255,0.1)]"
-      >
+    <div ref={containerRef} className="relative">
+      {/* Shadow-based depth instead of border */}
+      <div className="bg-[#1a1a1a] rounded-xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
         {/* Panel header */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-outline-variant/15 relative z-10">
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#1a1a1a]">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-error status-pulse" />
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 status-pulse" />
             <span
-              className="text-xs text-on-surface-variant uppercase tracking-widest"
+              className="text-xs text-[#666666]"
               style={{ fontFamily: "var(--font-jetbrains-mono)" }}
             >
-              REAL-TIME MONITOR
+              live monitor
             </span>
           </div>
           <span
-            className="text-[0.65rem] text-outline uppercase tracking-widest tabular-nums"
+            className="text-[0.65rem] text-[#444444] tabular-nums"
             style={{ fontFamily: "var(--font-jetbrains-mono)" }}
           >
             {count.toLocaleString()} validated
@@ -86,22 +68,22 @@ export default function ControlPanel() {
         </div>
 
         {/* Transaction rows */}
-        <div className="space-y-3 relative z-10">
+        <div className="space-y-3">
           {/* ALLOWED row */}
           <div
             className={[
-              "hero-action bg-surface-container-low p-4 rounded-lg flex items-center justify-between border-l-2 border-primary/20",
+              "hero-action bg-[#0a0a0a] p-4 rounded-lg flex items-center justify-between",
               rowsVisible[0] ? "visible" : "",
             ].join(" ")}
           >
             <div className="flex items-center gap-4">
-              <span className="material-symbols-outlined text-primary text-xl">swap_horiz</span>
+              <span className="material-symbols-outlined text-[#666666] text-xl">swap_horiz</span>
               <div style={{ fontFamily: "var(--font-jetbrains-mono)" }} className="text-sm">
-                <span className="text-on-surface-variant">EXEC:</span>{" "}
-                <span className="text-on-surface">Swap 20 USDC</span>
+                <span className="text-[#666666]">EXEC</span>{" "}
+                <span className="text-[#999999]">Swap 20 USDC</span>
               </div>
             </div>
-            <div className="px-3 py-1 bg-green-500/10 text-green-400 text-[0.65rem] font-bold rounded-sm uppercase tracking-tighter border border-green-500/20 pulse-glow-green">
+            <div className="px-2.5 py-1 text-emerald-400 text-[0.65rem] font-medium rounded">
               ALLOWED
             </div>
           </div>
@@ -109,18 +91,18 @@ export default function ControlPanel() {
           {/* PENDING row */}
           <div
             className={[
-              "hero-action bg-surface-container-low/50 p-4 rounded-lg flex items-center justify-between border-l-2 border-outline-variant/30 opacity-60",
+              "hero-action bg-[#0a0a0a]/50 p-4 rounded-lg flex items-center justify-between opacity-70",
               rowsVisible[1] ? "visible" : "",
             ].join(" ")}
           >
             <div className="flex items-center gap-4">
-              <span className="material-symbols-outlined text-on-surface-variant text-xl">hourglass_empty</span>
+              <span className="material-symbols-outlined text-[#444444] text-xl">hourglass_empty</span>
               <div style={{ fontFamily: "var(--font-jetbrains-mono)" }} className="text-sm">
-                <span className="text-on-surface-variant">EXEC:</span>{" "}
-                <span className="text-on-surface">Swap 50 USDC</span>
+                <span className="text-[#666666]">EXEC</span>{" "}
+                <span className="text-[#999999]">Swap 50 USDC</span>
               </div>
             </div>
-            <div className="px-3 py-1 bg-outline-variant/10 text-outline text-[0.65rem] font-bold rounded-sm uppercase tracking-tighter border border-outline-variant/20">
+            <div className="px-2.5 py-1 text-amber-500/70 text-[0.65rem] font-medium rounded">
               PENDING
             </div>
           </div>
@@ -128,42 +110,42 @@ export default function ControlPanel() {
           {/* BLOCKED row */}
           <div
             className={[
-              "hero-action bg-surface-container-highest p-4 rounded-lg flex items-center justify-between border-l-2 border-error",
+              "hero-action bg-[#0a0a0a] p-4 rounded-lg flex items-center justify-between border-l-2 border-red-500/30",
               rowsVisible[2] ? "visible" : "",
             ].join(" ")}
           >
             <div className="flex items-center gap-4">
-              <span className="material-symbols-outlined text-error text-xl">security</span>
+              <span className="material-symbols-outlined text-red-400/70 text-xl">security</span>
               <div style={{ fontFamily: "var(--font-jetbrains-mono)" }} className="text-sm">
-                <span className="text-on-surface-variant">EXEC:</span>{" "}
-                <span className="text-on-surface">Swap 100 USDC</span>
+                <span className="text-[#666666]">EXEC</span>{" "}
+                <span className="text-[#999999]">Swap 100 USDC</span>
               </div>
             </div>
-            <div className="px-3 py-1 bg-error/10 text-error-dim text-[0.65rem] font-bold rounded-sm uppercase tracking-tighter border border-error/20 pulse-glow-red">
+            <div className="px-2.5 py-1 text-red-400 text-[0.65rem] font-medium rounded">
               BLOCKED
             </div>
           </div>
         </div>
 
         {/* Policy engine terminal block */}
-        <div className="mt-6 p-4 bg-surface-container-lowest rounded-lg border border-outline-variant/10 relative z-10">
+        <div className="mt-6 p-4 bg-[#050505] rounded-lg">
           <div
-            className="text-[0.7rem] text-primary/70 mb-2 flex items-center gap-2"
+            className="text-[0.7rem] text-[#444444] mb-2 flex items-center gap-2"
             style={{ fontFamily: "var(--font-jetbrains-mono)" }}
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-primary status-pulse" />
-            POLICY_ENGINE_REPORT:
+            <div className="w-1.5 h-1.5 rounded-full bg-[#8b5cf6]/50 status-pulse" />
+            policy_engine
           </div>
           <div
-            className="text-[0.75rem] text-on-surface-variant leading-relaxed"
+            className="text-[0.75rem] text-[#666666] leading-relaxed"
             style={{ fontFamily: "var(--font-jetbrains-mono)" }}
           >
-            &gt; Violation detected: Threshold limit exceeded
+            &gt; Violation: Threshold limit exceeded
             <br />
-            &gt; Action: Transaction dropped locally.
+            &gt; Action: Transaction dropped
             <br />
             &gt; Status:{" "}
-            <span className="text-primary">Wallet Secure.</span>
+            <span className="text-emerald-400/80">Wallet secure</span>
           </div>
         </div>
       </div>
