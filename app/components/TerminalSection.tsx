@@ -18,44 +18,44 @@ interface TerminalBlock {
 const terminalLines: TerminalBlock[] = [
   {
     entries: [
-      { time: "14:02:01", level: "INFO", levelColor: "text-[#666666]", text: "Initializing control surface layer..." },
-      { time: "14:02:02", level: "INFO", levelColor: "text-[#666666]", text: "Listening for agent signals on Port 8080..." },
+      { time: "14:02:01", level: "INFO", levelColor: "text-[#666666]", text: "Connecting to Solana mainnet-beta via RPC..." },
+      { time: "14:02:02", level: "INFO", levelColor: "text-[#666666]", text: "Control surface active. Listening for agent instructions..." },
     ],
   },
   {
     entries: [
-      { time: "14:05:12", level: "AGENT", levelColor: "text-primary", text: "REQUEST swap(0xUSDC, 50.00, 0xWALLET_B)", textClass: "text-[#999999]" },
-      { time: "14:05:12", level: "LAZOR", levelColor: "text-[#737373]", text: 'Validating ruleset "Standard_Limits"...' },
-      { time: "14:05:13", level: "PASSED", levelColor: "text-emerald-400", text: "50 USDC <= Max Daily Limit (100 USDC)" },
+      { time: "14:05:12", level: "AGENT", levelColor: "text-primary", text: "REQUEST swap(EPjFWdd5...USDC, 50.00, 7xKp9...B4rY)", textClass: "text-[#999999]" },
+      { time: "14:05:12", level: "LAZOR", levelColor: "text-[#737373]", text: 'Validating against ruleset "daily_swap_limits"...' },
+      { time: "14:05:13", level: "PASSED", levelColor: "text-emerald-400", text: "50 USDC <= daily limit (100 USDC). Recipient whitelisted." },
       {
         time: "14:05:13",
         level: "STATUS",
         levelColor: "text-emerald-400",
         text: "",
-        badge: { text: "TRANSACTION_BROADCASTED", className: "text-emerald-400" },
+        badge: { text: "TX_SIGNED_AND_SENT", className: "text-emerald-400" },
       },
     ],
   },
   {
     entries: [
-      { time: "14:08:44", level: "AGENT", levelColor: "text-primary", text: "REQUEST transfer(0xALL, 0xUNKNOWN_ADDR)", textClass: "text-[#999999]" },
-      { time: "14:08:44", level: "LAZOR", levelColor: "text-[#737373]", text: 'Validating ruleset "Standard_Limits"...' },
-      { time: "14:08:44", level: "FAILED", levelColor: "text-red-400", text: "Action 'Transfer' not on Allowlist for this session." },
-      { time: "14:08:45", level: "FAILED", levelColor: "text-red-400", text: "'0xUNKNOWN_ADDR' is not a registered counterparty." },
+      { time: "14:08:44", level: "AGENT", levelColor: "text-primary", text: "REQUEST transfer(ALL_SOL, Gh9Z...unknown)", textClass: "text-[#999999]" },
+      { time: "14:08:44", level: "LAZOR", levelColor: "text-[#737373]", text: 'Validating against ruleset "daily_swap_limits"...' },
+      { time: "14:08:44", level: "FAILED", levelColor: "text-red-400", text: "transfer_all is not in session allowlist." },
+      { time: "14:08:45", level: "FAILED", levelColor: "text-red-400", text: "Gh9Z...unknown is not a registered counterparty." },
       {
         time: "14:08:45",
         level: "STATUS",
         levelColor: "text-red-400",
         text: "",
-        badge: { text: "INTERCEPTED_AND_DROPPED", className: "text-red-400 font-bold" },
+        badge: { text: "INSTRUCTION_DROPPED", className: "text-red-400 font-bold" },
       },
     ],
   },
   {
     entries: [
-      { time: "14:12:01", level: "AGENT", levelColor: "text-primary", text: "RULE_UPDATE: Set daily_limit = 200 USDC", textClass: "text-[#999999]" },
-      { time: "14:12:01", level: "LAZOR", levelColor: "text-[#737373]", text: "Validating rule update against owner policy..." },
-      { time: "14:12:02", level: "PASSED", levelColor: "text-emerald-400", text: "Owner passkey confirmed. Rule update authorized." },
+      { time: "14:12:01", level: "AGENT", levelColor: "text-primary", text: "RULE_UPDATE: set daily_limit = 200 USDC", textClass: "text-[#999999]" },
+      { time: "14:12:01", level: "LAZOR", levelColor: "text-[#737373]", text: "Verifying owner passkey signature..." },
+      { time: "14:12:02", level: "PASSED", levelColor: "text-emerald-400", text: "Passkey verified. Ruleset updated on-chain." },
       {
         time: "14:12:02",
         level: "STATUS",

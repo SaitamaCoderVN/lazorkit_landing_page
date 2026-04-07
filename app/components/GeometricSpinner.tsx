@@ -3,10 +3,9 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Pure-canvas geometric mandala/kaleidoscope spinner.
- * Creates rotating geometric shapes with radiating lines,
- * responding to mouse position and click-hold interaction.
- * No external 3D libraries — all trigonometry.
+ * Harmonograph simulation — physically-based pendulum drawing.
+ * Produces complex, organic Lissajous-like curves that feel hand-crafted.
+ * Much more sophisticated than simple rotating shapes.
  */
 export default function GeometricSpinner() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -24,16 +23,18 @@ export default function GeometricSpinner() {
       const parent = canvas.parentElement;
       if (!parent) return;
       const dpr = window.devicePixelRatio || 1;
-      const size = Math.min(parent.clientWidth, parent.clientHeight);
-      canvas.width = size * dpr;
-      canvas.height = size * dpr;
-      canvas.style.width = `${size}px`;
-      canvas.style.height = `${size}px`;
+      const w = parent.clientWidth;
+      const h = parent.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resize();
     window.addEventListener("resize", resize);
 
+    const parent = canvas.parentElement;
     const onMouse = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       mouseRef.current.x = (e.clientX - rect.left) / rect.width;
@@ -41,103 +42,86 @@ export default function GeometricSpinner() {
     };
     const onDown = () => { mouseRef.current.pressed = true; };
     const onUp = () => { mouseRef.current.pressed = false; };
-
-    const parent = canvas.parentElement;
     (parent || canvas).addEventListener("mousemove", onMouse);
     (parent || canvas).addEventListener("mousedown", onDown);
     window.addEventListener("mouseup", onUp);
+
+    // Harmonograph parameters — 4 pendulums
+    const params = {
+      f1: 2, f2: 3, f3: 2.002, f4: 3.003,  // frequencies
+      p1: 0, p2: Math.PI / 2, p3: 0.1, p4: Math.PI / 4,  // phases
+      d1: 0.003, d2: 0.003, d3: 0.002, d4: 0.002,  // damping
+      a1: 0.38, a2: 0.38, a3: 0.15, a4: 0.15,  // amplitudes
+    };
 
     const draw = () => {
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       const cx = w / 2;
       const cy = h / 2;
+      const scale = Math.min(w, h) * 0.9;
       const mouse = mouseRef.current;
 
-      // Speed up when pressed
-      const speed = mouse.pressed ? 0.025 : 0.006;
+      const speed = mouse.pressed ? 0.015 : 0.004;
       timeRef.current += speed;
-      const t = timeRef.current;
+      const globalT = timeRef.current;
 
       ctx.clearRect(0, 0, w, h);
 
-      const maxR = Math.min(w, h) * 0.42;
-      const PETALS = 8;
-      const RINGS = 6;
+      // Mouse subtly shifts frequency ratios
+      const fShift = (mouse.x - 0.5) * 0.01;
+      const pShift = (mouse.y - 0.5) * 0.3;
 
-      // Mouse influence
-      const mx = (mouse.x - 0.5) * 2;
-      const my = (mouse.y - 0.5) * 2;
+      // Draw the harmonograph curve
+      const POINTS = 2000;
+      const DURATION = 40;
 
-      // Draw radiating lines (starburst)
-      const rayCount = 32;
-      for (let i = 0; i < rayCount; i++) {
-        const angle = (i / rayCount) * Math.PI * 2 + t * 0.3;
-        const len = maxR * (0.6 + Math.sin(t * 2 + i * 0.5) * 0.15);
-
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
-        ctx.strokeStyle = `rgba(139, 92, 246, ${0.04 + (mouse.pressed ? 0.03 : 0)})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      }
-
-      // Draw concentric petal rings
-      for (let ring = 0; ring < RINGS; ring++) {
-        const ringT = ring / RINGS;
-        const r = maxR * (0.15 + ringT * 0.85);
-        const petalOffset = t * (1 + ring * 0.3) + ring * 0.5;
-        const wobble = Math.sin(t * 1.5 + ring) * mx * 0.15;
-
-        for (let p = 0; p < PETALS; p++) {
-          const angle = (p / PETALS) * Math.PI * 2 + petalOffset + wobble;
-          const nextAngle = ((p + 1) / PETALS) * Math.PI * 2 + petalOffset + wobble;
-
-          // Petal arc
-          const px1 = cx + Math.cos(angle) * r;
-          const py1 = cy + Math.sin(angle) * r;
-          const px2 = cx + Math.cos(nextAngle) * r;
-          const py2 = cy + Math.sin(nextAngle) * r;
-
-          // Control point (creates the curved petal shape)
-          const midAngle = (angle + nextAngle) / 2;
-          const bulge = r * (0.3 + Math.sin(t * 2 + ring + p) * 0.1 + my * 0.05);
-          const cpx = cx + Math.cos(midAngle) * (r + bulge);
-          const cpy = cy + Math.sin(midAngle) * (r + bulge);
-
-          ctx.beginPath();
-          ctx.moveTo(px1, py1);
-          ctx.quadraticCurveTo(cpx, cpy, px2, py2);
-
-          const alpha = 0.06 + (1 - ringT) * 0.08 + (mouse.pressed ? 0.05 : 0);
-          ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
-          ctx.lineWidth = 0.8;
-          ctx.stroke();
-        }
-      }
-
-      // Inner circle (core)
-      const coreR = maxR * 0.08;
       ctx.beginPath();
-      ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(139, 92, 246, 0.15)`;
-      ctx.lineWidth = 1;
+      for (let i = 0; i < POINTS; i++) {
+        const t = (i / POINTS) * DURATION + globalT;
+        const decay1 = Math.exp(-params.d1 * (i / POINTS) * DURATION);
+        const decay2 = Math.exp(-params.d2 * (i / POINTS) * DURATION);
+        const decay3 = Math.exp(-params.d3 * (i / POINTS) * DURATION);
+        const decay4 = Math.exp(-params.d4 * (i / POINTS) * DURATION);
+
+        const x = cx +
+          scale * params.a1 * Math.sin(t * (params.f1 + fShift) + params.p1 + pShift) * decay1 +
+          scale * params.a3 * Math.sin(t * (params.f3 + fShift) + params.p3) * decay3;
+        const y = cy +
+          scale * params.a2 * Math.sin(t * params.f2 + params.p2 + pShift * 0.5) * decay2 +
+          scale * params.a4 * Math.sin(t * params.f4 + params.p4) * decay4;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+
+      // Gradient along the curve — brighter at the "drawing tip"
+      ctx.strokeStyle = `rgba(139, 92, 246, ${mouse.pressed ? 0.18 : 0.12})`;
+      ctx.lineWidth = 0.8;
       ctx.stroke();
 
-      // Rotating ellipses at center (flower of life feel)
-      for (let i = 0; i < 6; i++) {
-        const angle = (i / 6) * Math.PI + t * 0.8;
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(angle);
-        ctx.beginPath();
-        ctx.ellipse(0, 0, maxR * 0.18, maxR * 0.08, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 + (mouse.pressed ? 0.04 : 0)})`;
-        ctx.lineWidth = 0.6;
-        ctx.stroke();
-        ctx.restore();
+      // Draw a brighter recent segment (last 10% of curve)
+      ctx.beginPath();
+      for (let i = Math.floor(POINTS * 0.9); i < POINTS; i++) {
+        const t = (i / POINTS) * DURATION + globalT;
+        const decay1 = Math.exp(-params.d1 * (i / POINTS) * DURATION);
+        const decay2 = Math.exp(-params.d2 * (i / POINTS) * DURATION);
+        const decay3 = Math.exp(-params.d3 * (i / POINTS) * DURATION);
+        const decay4 = Math.exp(-params.d4 * (i / POINTS) * DURATION);
+
+        const x = cx +
+          scale * params.a1 * Math.sin(t * (params.f1 + fShift) + params.p1 + pShift) * decay1 +
+          scale * params.a3 * Math.sin(t * (params.f3 + fShift) + params.p3) * decay3;
+        const y = cy +
+          scale * params.a2 * Math.sin(t * params.f2 + params.p2 + pShift * 0.5) * decay2 +
+          scale * params.a4 * Math.sin(t * params.f4 + params.p4) * decay4;
+
+        if (i === Math.floor(POINTS * 0.9)) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
+      ctx.strokeStyle = `rgba(139, 92, 246, ${mouse.pressed ? 0.35 : 0.22})`;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
 
       rafRef.current = requestAnimationFrame(draw);
     };

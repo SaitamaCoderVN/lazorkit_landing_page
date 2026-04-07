@@ -1,81 +1,88 @@
+/**
+ * Features section — no generic icons.
+ * Uses numbered entries with distinct left-aligned layout
+ * to feel authored, not template-generated.
+ */
+
 const features = [
   {
-    icon: "policy",
-    title: "Intent-Based Constraints",
+    num: "01",
+    title: "Scoped permissions, not blank checks",
     description:
-      "Define exactly what actions a bot is allowed to take — by type, amount, and counterparty. Rules are enforced before any transaction reaches the network.",
+      "You define the boundaries — SPL token, amount, recipient, instruction type. Your agent operates within those bounds. Anything outside gets dropped before it reaches Solana.",
   },
   {
-    icon: "key",
-    title: "Passkey Sessionkeys",
+    num: "02",
+    title: "Sessions expire. Keys never leave.",
     description:
-      "Session authorization is tied to a passkey — not a private key. Bots operate with scoped, time-limited credentials that can be revoked instantly.",
+      "Agents get temporary session credentials tied to a passkey on your device. Not a copy of your private key — a scoped, revocable permission slip.",
   },
   {
-    icon: "sensors",
-    title: "Real-Time Interception",
+    num: "03",
+    title: "Every command is intercepted",
     description:
-      "Every agent command is intercepted and validated at the control surface before it is broadcast. No rogue transaction reaches the chain.",
+      "Nothing goes straight to the Solana network. LazorKit validates every agent instruction against your ruleset in real time. Rogue transactions get caught, logged, and killed.",
   },
   {
-    icon: "lock",
-    title: "Zero Private Key Exposure",
+    num: "04",
+    title: "Enforcement lives on-chain",
     description:
-      "Private keys never leave your device and are never delegated. Bots are granted execution rights, not ownership rights.",
+      "Constraints aren't just client-side checks that can be bypassed. They're enforced at the Solana program level — cryptographically attested and verifiable on-chain.",
   },
   {
-    icon: "gavel",
-    title: "On-Chain Enforcement",
+    num: "05",
+    title: "Operators and owners are separate roles",
     description:
-      "Constraint logic is enforced at the protocol level — not just in the client. Rules are cryptographically attested and verifiable on-chain.",
-  },
-  {
-    icon: "group",
-    title: "Operator / Owner Split",
-    description:
-      "Owners authorize policy. Operators execute within policy. The two roles are fully decoupled, enabling safe multi-agent and multi-party environments.",
+      "Owners set policy. Operators execute within policy. A compromised agent can never escalate its own permissions.",
   },
 ];
 
 export default function FeaturesSection() {
   return (
-    <section className="reveal max-w-screen-2xl mx-auto px-8 py-40">
-      {/* Header — no label tag */}
-      <div className="mb-20 text-center">
+    <section className="reveal max-w-screen-2xl mx-auto px-8 pt-20 pb-40">
+      {/* Header — left-aligned, not centered */}
+      <div className="mb-16 max-w-2xl">
+        <p
+          className="text-[0.75rem] text-[#8b5cf6] mb-4 tracking-wide"
+          style={{ fontFamily: "var(--font-jetbrains-mono)" }}
+        >
+          How it works
+        </p>
         <h2
-          className="text-4xl font-bold tracking-tight text-white"
+          className="text-4xl font-bold tracking-tight text-white leading-[1.15]"
           style={{ fontFamily: "var(--font-space-grotesk)" }}
         >
-          Built for the Agentic Era
+          Five layers between your bot
+          <br />
+          and your balance.
         </h2>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#1a1a1a] rounded-xl overflow-hidden border border-[#1a1a1a]">
+      {/* Feature list — numbered, not icon-grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-12">
         {features.map((f) => (
-          <div
-            key={f.title}
-            data-glow
-            className="bg-[#111111] p-8 hover:bg-[#0f0f0f] transition-colors"
-          >
-            {/* Icon — neutral background, no purple circle */}
-            <div className="w-10 h-10 rounded-lg bg-[#161616] flex items-center justify-center mb-5">
-              <span className="material-symbols-outlined text-[#737373] text-xl">{f.icon}</span>
+          <div key={f.num} className="flex gap-6">
+            {/* Number */}
+            <span
+              className="text-[2rem] font-bold text-[#1a1a1a] leading-none shrink-0 w-12 tabular-nums"
+              style={{ fontFamily: "var(--font-space-grotesk)" }}
+            >
+              {f.num}
+            </span>
+            <div>
+              <h3
+                className="font-semibold text-white mb-2 text-[1.0625rem] leading-snug"
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
+              >
+                {f.title}
+              </h3>
+              <p
+                className="text-[0.9375rem] text-[#777777] leading-[1.7]"
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
+              >
+                {f.description}
+              </p>
             </div>
-            {/* Title */}
-            <h3
-              className="font-semibold text-white mb-3"
-              style={{ fontFamily: "var(--font-space-grotesk)" }}
-            >
-              {f.title}
-            </h3>
-            {/* Description */}
-            <p
-              className="text-sm text-[#737373] leading-relaxed"
-              style={{ fontFamily: "var(--font-space-grotesk)" }}
-            >
-              {f.description}
-            </p>
           </div>
         ))}
       </div>

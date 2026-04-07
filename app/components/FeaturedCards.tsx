@@ -39,7 +39,7 @@ export default function FeaturedCards() {
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
               Watch the control surface validate, approve, and block
-              agent commands — live in your browser.
+              Solana instructions — live in your browser.
             </p>
           </div>
         </a>
@@ -74,8 +74,8 @@ export default function FeaturedCards() {
               className="text-sm text-[#737373] leading-relaxed"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
-              Intent-based constraints, passkey session keys, and on-chain
-              enforcement — designed for the agentic era.
+              Passkey session keys, scoped permissions, and Solana program-level
+              enforcement — built for autonomous agents.
             </p>
           </div>
         </a>

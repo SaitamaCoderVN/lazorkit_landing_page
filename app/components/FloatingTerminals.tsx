@@ -15,20 +15,20 @@ interface TerminalCard {
 const cards: TerminalCard[] = [
   {
     id: "cli",
-    title: "lazorkit_cli --listening",
-    content: "> Intercepting agent signals...\n> Control surface active.\n> All systems nominal.",
+    title: "agent monitor",
+    content: "> Watching 3 active sessions\n> 847 transactions validated\n> 12 blocked in last 24h",
     canvas: <RadarScan />,
   },
   {
     id: "agents",
-    title: "agentic architecture",
-    content: "AI agents don't behave like humans.\nYour infrastructure should know that.",
+    title: "harmonograph",
+    content: "Parametric pendulum simulation.\nMouse shifts frequency ratios.\nHold click to accelerate.",
     canvas: <GeometricSpinner />,
   },
   {
     id: "intercept",
-    title: "real-time interception",
-    content: "See how LazorKit intercepts\nrogue transactions in real-time.",
+    title: "data flow",
+    content: "Live transaction stream.\nEach bar is a validated request\npassing through the control surface.",
     canvas: <DataStream />,
   },
 ];
@@ -148,14 +148,14 @@ export default function FloatingTerminals() {
           className="text-4xl font-bold tracking-tight text-white mb-4"
           style={{ fontFamily: "var(--font-space-grotesk)" }}
         >
-          Interactive control surface
+          Live visualizations
         </h2>
         <p
-          className="text-[#737373] text-lg"
+          className="text-[#777777] text-[1.0625rem] leading-[1.7]"
           style={{ fontFamily: "var(--font-space-grotesk)" }}
         >
-          Hover to explore, click and drag to interact. Every component
-          is a live demonstration of LazorKit&apos;s architecture.
+          Each card renders a real-time canvas simulation. Hover to interact
+          with the geometry, click and drag to move them.
         </p>
       </div>
 

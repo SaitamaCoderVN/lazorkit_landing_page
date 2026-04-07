@@ -140,9 +140,9 @@ export default function ControlPanel() {
             className="text-[0.75rem] text-[#666666] leading-relaxed"
             style={{ fontFamily: "var(--font-jetbrains-mono)" }}
           >
-            &gt; Violation: Threshold limit exceeded
+            &gt; Violation: SOL transfer exceeds session limit
             <br />
-            &gt; Action: Transaction dropped
+            &gt; Action: Instruction dropped before signing
             <br />
             &gt; Status:{" "}
             <span className="text-emerald-400/80">Wallet secure</span>

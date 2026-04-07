@@ -17,7 +17,7 @@ export default function HeroSection() {
             setTimeout(() => {
               el.style.opacity = "1";
               el.style.transform = "translateY(0)";
-            }, i * 150);
+            }, i * 120);
           });
           observer.unobserve(entries[0].target);
         }
@@ -30,80 +30,70 @@ export default function HeroSection() {
 
   const fadeStyle: React.CSSProperties = {
     opacity: 0,
-    transform: "translateY(20px)",
-    transition: "opacity 0.7s cubic-bezier(0.2,0.8,0.2,1), transform 0.7s cubic-bezier(0.2,0.8,0.2,1)",
+    transform: "translateY(16px)",
+    transition: "opacity 0.6s cubic-bezier(0.2,0.8,0.2,1), transform 0.6s cubic-bezier(0.2,0.8,0.2,1)",
   };
 
   return (
     <section
       ref={sectionRef}
-      className="reveal max-w-screen-2xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-40"
+      className="reveal max-w-screen-2xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center mb-32"
     >
-      {/* Left: copy */}
-      <div className="space-y-10">
-        {/* Status badge */}
-        <div
+      <div>
+        {/* Eyebrow — specific, not generic */}
+        <p
           data-hero-item
-          style={fadeStyle}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#222222]"
+          style={{ ...fadeStyle, fontFamily: "var(--font-jetbrains-mono)" }}
+          className="text-[0.75rem] text-[#8b5cf6] mb-6 tracking-wide"
         >
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 status-pulse" />
-          <span
-            className="text-[0.7rem] text-[#737373]"
-            style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-          >
-            System Operational
-          </span>
-        </div>
+          Solana agent infrastructure
+        </p>
 
-        {/* Headline — larger, tighter */}
+        {/* Headline — conversational, not buzzwordy */}
         <h1
           data-hero-item
           style={{ fontFamily: "var(--font-space-grotesk)", ...fadeStyle }}
-          className="text-6xl lg:text-7xl leading-[1.05] font-bold tracking-[-0.04em] text-white"
+          className="text-5xl lg:text-[4.25rem] leading-[1.08] font-bold tracking-[-0.035em] text-white mb-8"
         >
-          Bots can act —{" "}
+          Your bot trades.
           <br />
-          <span className="text-primary">
-            but only within rules.
-          </span>
+          <span className="text-[#8b5cf6]">It can&apos;t drain your wallet.</span>
         </h1>
 
-        {/* Body */}
+        {/* Body — concrete benefit, plain language */}
         <p
           data-hero-item
           style={{ fontFamily: "var(--font-space-grotesk)", ...fadeStyle }}
-          className="text-lg text-[#999999] max-w-lg leading-relaxed"
+          className="text-[1.125rem] text-[#999999] max-w-[28rem] leading-[1.7] mb-10"
         >
-          Give bots the power to execute — without ever risking your funds.
-          LazorKit enforces intent-based constraints directly on the control
-          surface.
+          LazorKit sits between your agent and your keys.
+          Define what it&apos;s allowed to do — amount, action, counterparty —
+          and every instruction gets validated before it hits Solana.
         </p>
 
-        {/* CTAs */}
+        {/* CTAs — one primary, one text */}
         <div
           data-hero-item
           style={fadeStyle}
-          className="flex items-center gap-6 pt-2"
+          className="flex items-center gap-5"
         >
           <a
             href="#terminal"
-            className="bg-[#8b5cf6] text-white px-8 py-3.5 rounded-lg font-medium hover:bg-[#7c3aed] transition-colors"
+            className="bg-[#8b5cf6] text-white px-7 py-3 rounded-lg font-medium hover:bg-[#7c3aed] transition-colors text-[0.9375rem]"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            See it in action
+            Watch the demo
           </a>
           <a
             href="#cta"
-            className="text-[#999999] hover:text-white transition-colors py-2 font-medium"
+            className="text-[#666666] hover:text-white transition-colors font-medium text-[0.9375rem]"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            Try the demo &rarr;
+            Read the docs &rarr;
           </a>
         </div>
       </div>
 
-      {/* Right: animated control panel */}
       <ControlPanel />
     </section>
   );

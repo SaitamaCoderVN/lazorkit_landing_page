@@ -23,9 +23,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "LazorKit // Kinetic Control Surface",
+  title: "LazorKit — Agent guardrails for Solana",
   description:
-    "Give bots the power to execute — without ever risking your funds. LazorKit enforces intent-based constraints directly on the control surface.",
+    "Open-source SDK that sits between your Solana agent and your keys. Define what it can do — every instruction gets validated before it hits the chain.",
 };
 
 export default function RootLayout({

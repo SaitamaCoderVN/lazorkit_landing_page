@@ -14,13 +14,13 @@ function NpmSnippet() {
   };
 
   return (
-    <div className="flex items-center gap-3 bg-[#0a0a0a] rounded-lg px-4 py-3 w-fit">
-      <span className="text-[#444444] select-none" style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "0.75rem" }}>$</span>
-      <span className="text-[#666666]" style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "0.8rem" }}>{cmd}</span>
+    <div className="inline-flex items-center gap-3 bg-[#0e0e0e] rounded-lg px-4 py-3 border border-[#1a1a1a]">
+      <span className="text-[#444444] select-none" style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "0.8rem" }}>$</span>
+      <code className="text-[#888888]" style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "0.85rem" }}>{cmd}</code>
       <button
         onClick={copy}
         aria-label="Copy install command"
-        className="ml-2 text-[#444444] hover:text-[#737373] transition-colors"
+        className="ml-1 text-[#444444] hover:text-white transition-colors"
       >
         {copied ? (
           <span className="material-symbols-outlined text-emerald-400 text-base">check</span>
@@ -32,77 +32,64 @@ function NpmSnippet() {
   );
 }
 
-function NewsletterForm() {
-  const [email, setEmail] = useState("");
-
-  return (
-    <div className="flex gap-2 max-w-sm">
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="your@email.com"
-        className="flex-1 bg-[#0a0a0a] border border-[#222222] focus:border-[#333333] rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#444444] outline-none transition-colors"
-        style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-      />
-      <button
-        type="submit"
-        className="bg-[#8b5cf6] text-white rounded-lg px-5 py-3 font-medium hover:bg-[#7c3aed] transition-colors text-sm"
-        style={{ fontFamily: "var(--font-space-grotesk)" }}
-      >
-        Subscribe
-      </button>
-    </div>
-  );
-}
-
 export default function CTASection() {
   return (
-    <section id="cta" className="reveal max-w-screen-2xl mx-auto px-8 pb-40">
-      <div className="relative bg-[#1a1a1a] rounded-2xl p-16 shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
-        <div className="relative z-10 max-w-xl">
+    <section id="cta" className="reveal max-w-screen-2xl mx-auto px-8 pb-32">
+      {/* Two-column: text left, install right */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        <div>
           <h2
-            className="text-4xl lg:text-5xl font-bold tracking-tight text-white mb-6"
+            className="text-4xl font-bold tracking-tight text-white mb-5 leading-[1.15]"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            Ready for kinetic control?
+            Start building with LazorKit.
           </h2>
           <p
-            className="text-lg text-[#737373] mb-8"
+            className="text-[1.0625rem] text-[#777777] mb-8 leading-[1.7] max-w-lg"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            Join the developers and teams building secure automation on
-            LazorKit.
+            Install the SDK, define your rulesets, and your agents run
+            with guardrails from day one. Currently in private beta.
           </p>
-          <div className="mb-8">
-            <NpmSnippet />
-          </div>
-          <div className="flex flex-wrap gap-4 mb-12">
+          <div className="flex flex-wrap items-center gap-4">
             <a
               href="#"
-              className="bg-[#8b5cf6] text-white font-medium px-8 py-3.5 rounded-lg hover:bg-[#7c3aed] transition-colors"
+              className="bg-[#8b5cf6] text-white font-medium px-7 py-3 rounded-lg hover:bg-[#7c3aed] transition-colors text-[0.9375rem]"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
-              Get Early Access
+              Request access
             </a>
             <a
               href="#"
-              className="text-[#737373] font-medium px-8 py-3.5 rounded-lg border border-[#222222] hover:border-[#333333] hover:text-white transition-colors"
+              className="text-[#666666] font-medium px-7 py-3 rounded-lg border border-[#222222] hover:border-[#333333] hover:text-white transition-colors text-[0.9375rem]"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
-              Read the Whitepaper
+              Documentation
             </a>
           </div>
+        </div>
 
-          {/* Newsletter — moved here from footer */}
-          <div className="pt-8 border-t border-[#1a1a1a]">
-            <p
-              className="text-sm text-[#666666] mb-4"
-              style={{ fontFamily: "var(--font-space-grotesk)" }}
-            >
-              Or subscribe for early access updates.
-            </p>
-            <NewsletterForm />
+        <div className="lg:pt-2">
+          <NpmSnippet />
+          <div className="mt-8 space-y-4">
+            <div className="flex items-baseline gap-3">
+              <span className="text-[#8b5cf6] text-sm">&#10003;</span>
+              <span className="text-[#888888] text-[0.9375rem]" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+                TypeScript SDK with full type coverage
+              </span>
+            </div>
+            <div className="flex items-baseline gap-3">
+              <span className="text-[#8b5cf6] text-sm">&#10003;</span>
+              <span className="text-[#888888] text-[0.9375rem]" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+                Works with any Solana agent framework (ElizaOS, GOAT, etc.)
+              </span>
+            </div>
+            <div className="flex items-baseline gap-3">
+              <span className="text-[#8b5cf6] text-sm">&#10003;</span>
+              <span className="text-[#888888] text-[0.9375rem]" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+                10-minute integration, no architecture changes
+              </span>
+            </div>
           </div>
         </div>
       </div>

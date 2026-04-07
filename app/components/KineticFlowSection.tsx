@@ -6,7 +6,7 @@ const nodes = [
   { icon: "smart_toy", title: "Agent", subtitle: "Request Initiation" },
   { icon: "layers", title: "LazorKit", subtitle: "Control Intercept" },
   { icon: "rule", title: "Rules", subtitle: "Constraint Check" },
-  { icon: "terminal", title: "Execution", subtitle: "On-Chain Action" },
+  { icon: "terminal", title: "Execution", subtitle: "Solana Transaction" },
 ];
 
 export default function KineticFlowSection() {
